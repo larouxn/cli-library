@@ -7,7 +7,14 @@ require 'digest/sha1'
 ## Cleanup show regex
 ## To class or not class library
 
-@library = {}
+@library = {
+  :key1 => ["Moby Ding", "Dingle", "unread"],
+  :key2 => ["Moby Ding2", "Dingle2", "read"],
+}
+
+# def print_book
+#   puts "#{array[0]} by #{array[1]} \(#{array[2]}\)"
+# end
 
 def hash_title(title)
   (Digest::SHA1.hexdigest(title)).to_sym
@@ -16,7 +23,7 @@ end
 def add(title, author)
   hash = hash_title(title)
   if @library.has_key?(hash)
-    puts "Book is already in your library"
+    puts "That book is already in your library"
   else
     @library[hash] = [title, author, "unread"]
     puts "Added #{title} by #{author}"
@@ -33,6 +40,7 @@ def read(title)
   end
 end
 
+# Could use some refactoring
 def show(all_or_unread, author = nil)
   if author == nil
     case all_or_unread
@@ -42,15 +50,26 @@ def show(all_or_unread, author = nil)
       end
     when "unread"
       @library.each do |key, array|
-        if array[2] == "unread"
+        if array[2].to_s == "unread"
           puts "#{array[0]} by #{array[1]} \(#{array[2]}\)"
         end
       end
     end
   else
-    puts "Here's #{all_or_unread} by #{author}"
-
-
+    case all_or_unread
+    when "all"
+      @library.each_pair do |key, array|
+        if array[1] == author.tr('"', '')
+          puts "#{array[0]} by #{array[1]} \(#{array[2]}\)"
+        end
+      end
+    when "unread"
+      @library.each do |key, array|
+        if array[1] == author.tr('"', '') && array[2].to_s == "unread"
+          puts "#{array[0]} by #{array[1]} \(#{array[2]}\)"
+        end
+      end
+    end
   end
 end
 
