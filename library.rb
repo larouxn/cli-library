@@ -21,10 +21,15 @@ def add(title, author)
   end
 end
 
-  def read(title)
+def read(title)
+  hash = Digest::SHA1.hexdigest(title)
+  if @library[hash].status == "read"
+    puts "Book is already marked as read"
+  else
+    @library[hash].read
     puts "You've read #{title}!"
-    # semi-persistent data code
   end
+end
 
   def show (all_or_unread, author = nil)
     # multiple optional arguments, case based on what the arguments are
