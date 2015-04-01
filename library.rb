@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby
 
 ### TO DO
-#[]# Cleanup hashing
+#[X]# Cleanup hashing
 #[]# Cleanup show regex
-#[]# To class or not class library
+#[X]# To class or not class library
+#[O]# Cleanup show method
 
 ## Test data
 # @library = {
@@ -19,7 +20,7 @@ def print_to_console(message)
 end
 
 def print_book(array)
-  "#{array[0]} by #{array[1]} \(#{array[2]}\)"
+  puts "#{array[0]} by #{array[1]} \(#{array[2]}\)"
 end
 
 def add(title, author)
@@ -47,49 +48,59 @@ def read(title)
 end
 
 # Could use some refactoring
-##
-
 def show(all_or_unread, author = nil)
+  puts "\n"
   if @library.size == 0
-    print_to_console("Your library is empty.")
+    puts "Your library is empty."
   elsif author == nil
     case all_or_unread
     when "all"
       @library.each do |key, array|
-        print_to_console(print_book(array))
+        print_book(array)
       end
     when "unread"
       number_of_unread = 0
       @library.each do |key, array|
         if array[2].to_s == "unread"
-          print_to_console(print_book(array))
+          print_book(array)
           number_of_unread += 1
         end
       end
       if number_of_unread == 0
-        print_to_console("All books have already been read.")
+        puts "All books have already been read."
       end
     end
   else
     case all_or_unread
     when "all"
+      books_by_author = 0
       @library.each_pair do |key, array|
         if array[1].downcase == author.downcase.tr('"', '')
-          print_to_console(print_book(array))
+          print_book(array)
+          books_by_author += 1
+        end
+        if books_by_author == 0
+          puts "You do not have any books by that author."
         end
       end
     when "unread"
+      books_by_author = 0
       @library.each do |key, array|
         if array[1].downcase == author.downcase.tr('"', '') && array[2].to_s == "unread"
-          print_to_console(print_book(array))
+          print_book(array)
+          books_by_author += 1
+        end
+        if books_by_author == 0
+          puts "You've already read all of your books by #{array[1]}."
         end
       end
     end
   end
+  puts "\n"
 end
 
 def quit
-  puts "\nBye!"
+  print_to_console("\nBye!")
   exit
 end
 
@@ -143,7 +154,7 @@ loop do
     quit
   when ""
   else
-    puts "Command not recognized, please use 'help' for a list of available commands"
+    puts "\nCommand not recognized, please use 'help' for a list of available commands"
     puts "\n"
   end
 end
