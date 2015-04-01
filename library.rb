@@ -74,7 +74,7 @@ def show(all_or_unread, author = nil)
 end
 
 def quit
-  puts "Take care and have a great day!"
+  puts "Bye!"
   exit
 end
 
