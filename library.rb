@@ -31,55 +31,54 @@ def read(title)
   end
 end
 
-  def show (all_or_unread, author = nil)
-    # multiple optional arguments, case based on what the arguments are
-    if author == nil
-      puts "Here's #{all_or_unread}"
-      puts "\"Grapes of Wrath\" by John Steinbeck (unread)"
-    else
-      puts "Here's #{all_or_unread} by #{author}"
-    end
-
-
-    # case all_or_unread
-    # when "all"
-    #   # beep
-    # when "unread"
-    #   # boop
-    # else
-    #   puts "Improper arguments"
-    # end
-    # semi-persistent data code
+def show (all_or_unread, author = nil)
+  # multiple optional arguments, case based on what the arguments are
+  if author == nil
+    puts "Here's #{all_or_unread}"
+    puts "\"Grapes of Wrath\" by John Steinbeck (unread)"
+  else
+    puts "Here's #{all_or_unread} by #{author}"
   end
 
-  def quit
-    exit
-  end
 
-  def add_to_library
+  # case all_or_unread
+  # when "all"
+  #   # beep
+  # when "unread"
+  #   # boop
+  # else
+  #   puts "Improper arguments"
+  # end
+  # semi-persistent data code
+end
 
-  end
+def quit
+  exit
+end
 
-  def read_book
-  end
+def add_to_library
 
-  def search_library(title_or_author)
-  end
+end
 
-  def help
-    puts <<-help
-    Usage: ruby library.rb
+def read_book
+end
 
-    Commands:
-    - add "title" "author"      Adds a book to the library with the given title and author. All books are unread by default.
-    - read "title"              Marks a given book as read.
-    - show all                  Displays all of the books in the library.
-    - show unread               Display all of the books that are unread.
-    - show all by "author"      Shows all of the books in the library by the given author.
-    - show unread by "author"   Shows the unread books in the library by the given author.
-    - quit                      Quits the program.
-    help
-  end
+def search_library(title_or_author)
+end
+
+def help
+  puts <<-help
+  Usage: ruby library.rb
+
+  Commands:
+  - add "title" "author"      Adds a book to the library with the given title and author. All books are unread by default.
+  - read "title"              Marks a given book as read.
+  - show all                  Displays all of the books in the library.
+  - show unread               Display all of the books that are unread.
+  - show all by "author"      Shows all of the books in the library by the given author.
+  - show unread by "author"   Shows the unread books in the library by the given author.
+  - quit                      Quits the program.
+  help
 end
 
 loop do
