@@ -17,12 +17,13 @@ def help
 end
 
 def add(title, author)
+  author = author.tr('"', '')
   puts "Added #{title} by #{author}"
   # semi-persistent data code
 end
 
 def read(title)
-  puts "Marked #{title} as read"
+  puts "You've read #{title}!"
   # semi-persistent data code
 end
 
@@ -54,7 +55,7 @@ library = Tempfile.new("library.txt")
 
 begin
   loop do
-    print ">> "
+    print "> "
 
     begin
       line = $stdin.gets.chomp
