@@ -1,11 +1,25 @@
 #!/usr/bin/env ruby
 
-class Personal_Library
-  @@library = {}
-  def add(title, author)
+require_relative 'book'
+require 'digest/sha1'
+
+### TO DO
+## Cleanup hashing
+## Cleanup show regex
+## To class or not class library
+
+@library = {}
+
+def add(title, author)
+  hash = Digest::SHA1.hexdigest(title)
+  if @library.has_key?(hash)
+    puts "Book is already in your library"
+  else
+    book = Book.new(title, author)
+    @library[hash] = book
     puts "Added #{title} by #{author}"
-    # semi-persistent data code
   end
+end
 
   def read(title)
     puts "You've read #{title}!"
