@@ -16,34 +16,35 @@ require 'digest/sha1'
 
 puts "Welcome to your library!"
 
-# def print_book
-#   puts "#{array[0]} by #{array[1]} \(#{array[2]}\)"
-# end
-
-def hash_title(title)
-  (Digest::SHA1.hexdigest(title)).to_sym
+def print_book(array)
+  puts "\n#{array[0]} by #{array[1]} \(#{array[2]}\)"
+  puts "\n"
 end
 
+# def hash_title(title)
+#   (Digest::SHA1.hexdigest(title)).to_sym
+# end
+
 def add(title, author)
-  hash = hash_title(title)
-  if @library.has_key?(hash)
-    puts "\nThat book is already in your library"
+  key = title.to_sym
+  if @library.has_key?(key)
+    puts "\nThat book is already in your library."
     puts "\n"
   else
-    @library[hash] = [title, author, "unread"]
+    @library[key] = [title, author, "unread"]
     puts "\nAdded #{title} by #{author}"
     puts "\n"
   end
 end
 
 def read(title)
-  hash = hash_title(title)
-  if @library[hash][2] == "read"
-    puts "Book is already marked as read"
+  key = title.to_sym
+  if @library[key][2] == "read"
+    puts "\nBook is already marked as read."
     puts "\n"
   else
-    @library[hash][2] = "read"
-    puts "You've read #{title}!"
+    @library[key][2] = "read"
+    puts "\nYou've read #{title}!"
     puts "\n"
   end
 end
@@ -54,15 +55,21 @@ def show(all_or_unread, author = nil)
     case all_or_unread
     when "all"
       @library.each do |key, array|
-        puts "#{array[0]} by #{array[1]} \(#{array[2]}\)"
-        puts "\n"
+        print_book(array)
       end
     when "unread"
+      number_of_unread = 0
+
       @library.each do |key, array|
         if array[2].to_s == "unread"
-          puts "#{array[0]} by #{array[1]} \(#{array[2]}\)"
-          puts "\n"
+          print_book(array)
+          number_of_unread += 1
         end
+      end
+
+      if number_of_unread == 0
+        puts "\nAll books have already been read."
+        puts "\n"
       end
     end
   else
@@ -70,15 +77,13 @@ def show(all_or_unread, author = nil)
     when "all"
       @library.each_pair do |key, array|
         if array[1] == author.tr('"', '')
-          puts "#{array[0]} by #{array[1]} \(#{array[2]}\)"
-          puts "\n"
+          print_book(array)
         end
       end
     when "unread"
       @library.each do |key, array|
         if array[1] == author.tr('"', '') && array[2].to_s == "unread"
-          puts "#{array[0]} by #{array[1]} \(#{array[2]}\)"
-          puts "\n"
+          print_book(array)
         end
       end
     end
