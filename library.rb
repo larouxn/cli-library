@@ -7,78 +7,81 @@
 
 ## Test data
 # @library = {
-#   :"Moby Dick" => ["Moby Ding", "Dingle", "unread"],
-#   :"Moby Ding2" => ["Moby Ding2", "Dingle2", "read"],
+#   :"Moby Dick" => ["Moby Dick", "Dingle", "unread"],
+#   :"Moby Dick2" => ["Moby Dick2", "Dingle2", "read"],
 # }
 
 @library = {}
 
-puts "Welcome to your library!"
-
-def print_book(array)
-  puts "\n#{array[0]} by #{array[1]} \(#{array[2]}\)"
+def print_to_console(message)
+  puts "\n#{message}"
   puts "\n"
 end
 
+def print_book(array)
+  "#{array[0]} by #{array[1]} \(#{array[2]}\)"
+end
+
 def add(title, author)
-  key = title.to_sym
+  key = title.downcase.to_sym
   if @library.has_key?(key)
-    puts "\nThat book is already in your library."
-    puts "\n"
+    print_to_console("That book is already in your library.")
   else
     @library[key] = [title, author, "unread"]
-    puts "\nAdded #{title} by #{author}"
-    puts "\n"
+    print_to_console("Added #{title} by #{author}")
   end
 end
 
 def read(title)
-  key = title.to_sym
-  if @library[key][2] == "read"
-    puts "\nBook is already marked as read."
-    puts "\n"
+  key = title.downcase.to_sym
+  if @library.has_key? key
+    if @library[key][2] == "read"
+      print_to_console("#{title} is already marked as read.")
+    else
+      @library[key][2] = "read"
+      print_to_console("You've read #{title}!")
+    end
   else
-    @library[key][2] = "read"
-    puts "\nYou've read #{title}!"
-    puts "\n"
+    print_to_console("#{title} is not in your library.")
   end
 end
 
 # Could use some refactoring
+##
+
 def show(all_or_unread, author = nil)
-  if author == nil
+  if @library.size == 0
+    print_to_console("Your library is empty.")
+  elsif author == nil
     case all_or_unread
     when "all"
       @library.each do |key, array|
-        print_book(array)
+        print_to_console(print_book(array))
       end
     when "unread"
       number_of_unread = 0
-
       @library.each do |key, array|
         if array[2].to_s == "unread"
-          print_book(array)
+          print_to_console(print_book(array))
           number_of_unread += 1
         end
       end
-
       if number_of_unread == 0
-        puts "\nAll books have already been read."
-        puts "\n"
+        print_to_console("All books have already been read.")
       end
     end
   else
     case all_or_unread
     when "all"
       @library.each_pair do |key, array|
-        if array[1] == author.tr('"', '')
-          print_book(array)
+        if array[1].downcase == author.downcase.tr('"', '')
+          print_to_console(print_book(array))
         end
       end
     when "unread"
       @library.each do |key, array|
-        if array[1] == author.tr('"', '') && array[2].to_s == "unread"
-          print_book(array)
+        if array[1].downcase == author.downcase.tr('"', '') && array[2].to_s == "unread"
+          print_to_console(print_book(array))
         end
       end
     end
@@ -86,7 +89,7 @@ def show(all_or_unread, author = nil)
 end
 
 def quit
-  puts "Bye!"
+  puts "\nBye!"
   exit
 end
 
@@ -106,6 +109,8 @@ def help
 
   puts "\n"
 end
+
+print_to_console("Welcome to your library!")
 
 loop do
   print "> "
