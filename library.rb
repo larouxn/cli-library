@@ -57,16 +57,6 @@ def quit
   exit
 end
 
-def add_to_library
-
-end
-
-def read_book
-end
-
-def search_library(title_or_author)
-end
-
 def help
   puts <<-help
   Usage: ruby library.rb
