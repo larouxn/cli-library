@@ -1,15 +1,14 @@
 #!/usr/bin/env ruby
 
-require 'digest/sha1'
-
 ### TO DO
-## Cleanup hashing
-## Cleanup show regex
-## To class or not class library
+#[]# Cleanup hashing
+#[]# Cleanup show regex
+#[]# To class or not class library
 
+## Test data
 # @library = {
-#   :key1 => ["Moby Ding", "Dingle", "unread"],
-#   :key2 => ["Moby Ding2", "Dingle2", "read"],
+#   :"Moby Dick" => ["Moby Ding", "Dingle", "unread"],
+#   :"Moby Ding2" => ["Moby Ding2", "Dingle2", "read"],
 # }
 
 @library = {}
@@ -20,10 +19,6 @@ def print_book(array)
   puts "\n#{array[0]} by #{array[1]} \(#{array[2]}\)"
   puts "\n"
 end
-
-# def hash_title(title)
-#   (Digest::SHA1.hexdigest(title)).to_sym
-# end
 
 def add(title, author)
   key = title.to_sym
