@@ -100,7 +100,7 @@ def show(all_or_unread, author = nil)
 end
 
 def quit
-  print_to_console("\nBye!")
+  print_to_console("Bye!")
   exit
 end
 
