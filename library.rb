@@ -7,10 +7,14 @@ require 'digest/sha1'
 ## Cleanup show regex
 ## To class or not class library
 
-@library = {
-  :key1 => ["Moby Ding", "Dingle", "unread"],
-  :key2 => ["Moby Ding2", "Dingle2", "read"],
-}
+# @library = {
+#   :key1 => ["Moby Ding", "Dingle", "unread"],
+#   :key2 => ["Moby Ding2", "Dingle2", "read"],
+# }
+
+@library = {}
+
+puts "Welcome to your library!"
 
 # def print_book
 #   puts "#{array[0]} by #{array[1]} \(#{array[2]}\)"
@@ -23,10 +27,12 @@ end
 def add(title, author)
   hash = hash_title(title)
   if @library.has_key?(hash)
-    puts "That book is already in your library"
+    puts "\nThat book is already in your library"
+    puts "\n"
   else
     @library[hash] = [title, author, "unread"]
-    puts "Added #{title} by #{author}"
+    puts "\nAdded #{title} by #{author}"
+    puts "\n"
   end
 end
 
@@ -34,9 +40,11 @@ def read(title)
   hash = hash_title(title)
   if @library[hash][2] == "read"
     puts "Book is already marked as read"
+    puts "\n"
   else
     @library[hash][2] = "read"
     puts "You've read #{title}!"
+    puts "\n"
   end
 end
 
@@ -47,11 +55,13 @@ def show(all_or_unread, author = nil)
     when "all"
       @library.each do |key, array|
         puts "#{array[0]} by #{array[1]} \(#{array[2]}\)"
+        puts "\n"
       end
     when "unread"
       @library.each do |key, array|
         if array[2].to_s == "unread"
           puts "#{array[0]} by #{array[1]} \(#{array[2]}\)"
+          puts "\n"
         end
       end
     end
@@ -61,12 +71,14 @@ def show(all_or_unread, author = nil)
       @library.each_pair do |key, array|
         if array[1] == author.tr('"', '')
           puts "#{array[0]} by #{array[1]} \(#{array[2]}\)"
+          puts "\n"
         end
       end
     when "unread"
       @library.each do |key, array|
         if array[1] == author.tr('"', '') && array[2].to_s == "unread"
           puts "#{array[0]} by #{array[1]} \(#{array[2]}\)"
+          puts "\n"
         end
       end
     end
@@ -91,6 +103,8 @@ def help
   - show unread by "author"   Shows the unread books in the library by the given author.
   - quit                      Quits the program.
   help
+
+  puts "\n"
 end
 
 loop do
@@ -125,5 +139,6 @@ loop do
   when ""
   else
     puts "Command not recognized, please use 'help' for a list of available commands"
+    puts "\n"
   end
 end
