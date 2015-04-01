@@ -16,13 +16,27 @@ def help
   help
 end
 
-def add
+def add(title, author)
+  puts "Added #{title} by #{author}"
+  # semi-persistent data code
 end
 
-def read
+def read(title)
+  puts "#{title} marked as read"
+  # semi-persistent data code
 end
 
-def show
+def show (all_or_unread, by, author)
+  # multiple optional arguments, case based on what the arguments are
+  case all_or_unread
+  when "all"
+    # beep
+  when "unread"
+    # boop
+  else
+    puts "Improper arguments"
+  end
+  # semi-persistent data code
 end
 
 def quit
@@ -41,36 +55,23 @@ begin
       exit
     end
 
+    # Capture imput, format it, and send it to methods
     case line
-    when /help/
+    when /^help$/
       help
-    when /^add .+ .+/
-      puts "WILL BE USED TO ADD BOOKS"
-    when /^read .+/
+    when /^add "{1}.*?"{1} "{1}.*?"{1}$/
+      line = line.scan(/"{1}.*?"{1}/)
+      add(line[0], line[1])
+    when /^read .+$/
       puts "WILL BE USED TO SET READ FLAGS"
-    when /^show all/
+    when /^show .+$/
       puts "WILL BE USED TO LIST BOOKS"
-    when /^show unread/
-      puts "WILL BE USED TO LIST BOOKS"
-    when /^show all by .+/
-      puts "WILL BE USED TO LIST BOOKS"
-    when /^show unread by .+/
-      puts "WILL BE USED TO LIST BOOKS"
-    when /quit/
+    when /^(quit|exit)$/
       quit
     when ""
     else
       puts "Command not recognized, please use 'help' for a list of available commands"
     end
-
-    # if from_stdin
-    #   run = "echo \"%s\" | #{command}" % [ line, nil ]
-    # else
-    #   run = "#{command} %s" % [ line, nil ]
-    # end
-    # puts "$ #{run}" if debug
-    # system run
-    # warn "Use Ctrl-D (i.e. EOF) to exit" if line =~ /^(exit|quit)$/
   end
 ensure
   puts ""
