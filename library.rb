@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 
-require_relative 'book'
 require 'digest/sha1'
 
 ### TO DO
@@ -10,46 +9,49 @@ require 'digest/sha1'
 
 @library = {}
 
+def hash_title(title)
+  (Digest::SHA1.hexdigest(title)).to_sym
+end
+
 def add(title, author)
-  hash = Digest::SHA1.hexdigest(title)
+  hash = hash_title(title)
   if @library.has_key?(hash)
     puts "Book is already in your library"
   else
-    book = Book.new(title, author)
-    @library[hash] = book
+    @library[hash] = [title, author, "unread"]
     puts "Added #{title} by #{author}"
   end
 end
 
 def read(title)
-  hash = Digest::SHA1.hexdigest(title)
-  if @library[hash].status == "read"
+  hash = hash_title(title)
+  if @library[hash][2] == "read"
     puts "Book is already marked as read"
   else
-    @library[hash].read
+    @library[hash][2] = "read"
     puts "You've read #{title}!"
   end
 end
 
-def show (all_or_unread, author = nil)
-  # multiple optional arguments, case based on what the arguments are
+def show(all_or_unread, author = nil)
   if author == nil
-    puts "Here's #{all_or_unread}"
-    puts "\"Grapes of Wrath\" by John Steinbeck (unread)"
+    case all_or_unread
+    when "all"
+      @library.each do |key, array|
+        puts "#{array[0]} by #{array[1]} \(#{array[2]}\)"
+      end
+    when "unread"
+      @library.each do |key, array|
+        if array[2] == "unread"
+          puts "#{array[0]} by #{array[1]} \(#{array[2]}\)"
+        end
+      end
+    end
   else
     puts "Here's #{all_or_unread} by #{author}"
+
+
   end
-
-
-  # case all_or_unread
-  # when "all"
-  #   # beep
-  # when "unread"
-  #   # boop
-  # else
-  #   puts "Improper arguments"
-  # end
-  # semi-persistent data code
 end
 
 def quit
