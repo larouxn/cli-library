@@ -154,7 +154,6 @@ loop do
     quit
   when ""
   else
-    puts "\nCommand not recognized, please use 'help' for a list of available commands"
-    puts "\n"
+    print_to_console("Command not recognized, please use 'help' for a list of available commands")
   end
 end
