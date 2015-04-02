@@ -2,7 +2,7 @@
 
 ### TO DO
 #[X]# Cleanup hashing
-#[]# Cleanup show regex
+#[O]# Cleanup show regex
 #[X]# To class or not class library
 #[O]# Cleanup show method
 
@@ -14,17 +14,27 @@
 
 @library = {}
 
-def print_to_console(message)
-  puts "\n#{message}"
-  puts "\n"
+# Helper methods
+def print_to_console(message, breaks = true)
+  if breaks
+    puts "\n#{message}"
+    puts "\n"
+  else
+    puts message
+  end
 end
 
-def print_book(array)
-  puts "#{array[0]} by #{array[1]} \(#{array[2]}\)"
+def format_book(array)
+  "#{array[0]} by #{array[1]} \(#{array[2]}\)"
 end
 
+def create_key(value)
+  key = value.downcase.to_sym
+end
+
+# Main methods
 def add(title, author)
-  key = title.downcase.to_sym
+  key = create_key(title)
   if @library.has_key?(key)
     print_to_console("That book is already in your library.")
   else
@@ -47,7 +57,6 @@ def read(title)
   end
 end
 
-# Could use some refactoring
 def show(all_or_unread, author = nil)
   puts "\n"
   if @library.size == 0
@@ -56,13 +65,13 @@ def show(all_or_unread, author = nil)
     case all_or_unread
     when "all"
       @library.each do |key, array|
-        print_book(array)
+        print_to_console(format_book(array), false)
       end
     when "unread"
       number_of_unread = 0
       @library.each do |key, array|
         if array[2].to_s == "unread"
-          print_book(array)
+          print_to_console(format_book(array), false)
           number_of_unread += 1
         end
       end
@@ -76,7 +85,7 @@ def show(all_or_unread, author = nil)
       books_by_author = 0
       @library.each_pair do |key, array|
         if array[1].downcase == author.downcase.tr('"', '')
-          print_book(array)
+          print_to_console(format_book(array), false)
           books_by_author += 1
         end
         if books_by_author == 0
@@ -87,7 +96,7 @@ def show(all_or_unread, author = nil)
       books_by_author = 0
       @library.each do |key, array|
         if array[1].downcase == author.downcase.tr('"', '') && array[2].to_s == "unread"
-          print_book(array)
+          print_to_console(format_book(array), false)
           books_by_author += 1
         end
         if books_by_author == 0
@@ -117,7 +126,6 @@ def help
   - show unread by "author"   Shows the unread books in the library by the given author.
   - quit                      Quits the program.
   help
-
   puts "\n"
 end
 
@@ -126,13 +134,14 @@ print_to_console("Welcome to your library!")
 loop do
   print "> "
 
+  # Capture input
   begin
     line = $stdin.gets.chomp
   rescue NoMethodError, Interrupt
     exit
   end
 
-  # Capture input, format it, and send it to methods
+  # Decipher input, format it, and send it to methods
   case line
   when /^help$/
     help
