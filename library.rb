@@ -1,18 +1,15 @@
 #!/usr/bin/env ruby
 
-### TO DO
-#[X]# Cleanup hashing
-#[O]# Cleanup show regex
-#[X]# To class or not class library
-#[O]# Cleanup show method
-
-## Test data
-# @library = {
-#   :"Moby Dick" => ["Moby Dick", "Dingle", "unread"],
-#   :"Moby Dick2" => ["Moby Dick2", "Dingle2", "read"],
-# }
+#####################################
+# Nicholas La Roux                  #
+# April 3 2015                      #
+# Etsy Code Challenge               #
+# Create command line personal      #
+# library management utility        #
+#####################################
 
 @library = {}
+@printed = false
 
 # Helper methods
 def print_to_console(message, breaks = true)
@@ -22,6 +19,7 @@ def print_to_console(message, breaks = true)
   else
     puts message
   end
+  @printed = true
 end
 
 def format_book(array)
@@ -59,49 +57,38 @@ end
 
 def show(all_or_unread, author = nil)
   puts "\n"
+  number_of_unread = 0
+  number_of_books_by_author = 0
+  @printed = false
+
   if @library.size == 0
-    puts "Your library is empty."
-  elsif author == nil
-    case all_or_unread
-    when "all"
-      @library.each do |key, array|
+    print_to_console("Your library is empty.", false)
+  else
+    @library.each do |key, array|
+      if author && all_or_unread == "unread" && array[1].downcase == author.downcase.tr('"', '') && array[2].to_s == "unread" # show unread by author
+        print_to_console(format_book(array), false)
+        number_of_books_by_author += 1
+        number_of_unread += 1
+      elsif author && all_or_unread == "unread" && array[1].downcase == author.downcase.tr('"', '')
+        number_of_books_by_author += 1 # Not perfect, used for show unread by author, when all books by that author have been read
+      elsif author && all_or_unread == "all" && array[1].downcase == author.downcase.tr('"', '') # show all by author
+        print_to_console(format_book(array), false)
+        number_of_books_by_author += 1
+      elsif author == nil && all_or_unread == "unread" && array[2].to_s == "unread" # show unread
+        print_to_console(format_book(array), false)
+        number_of_unread += 1
+      elsif author == nil && all_or_unread == "all" # show all
         print_to_console(format_book(array), false)
       end
-    when "unread"
-      number_of_unread = 0
-      @library.each do |key, array|
-        if array[2].to_s == "unread"
-          print_to_console(format_book(array), false)
-          number_of_unread += 1
-        end
-      end
-      if number_of_unread == 0
-        puts "All books have already been read."
-      end
     end
-  else
-    case all_or_unread
-    when "all"
-      books_by_author = 0
-      @library.each_pair do |key, array|
-        if array[1].downcase == author.downcase.tr('"', '')
-          print_to_console(format_book(array), false)
-          books_by_author += 1
-        end
-        if books_by_author == 0
-          puts "You do not have any books by that author."
-        end
-      end
-    when "unread"
-      books_by_author = 0
-      @library.each do |key, array|
-        if array[1].downcase == author.downcase.tr('"', '') && array[2].to_s == "unread"
-          print_to_console(format_book(array), false)
-          books_by_author += 1
-        end
-        if books_by_author == 0
-          puts "You've already read all of your books by #{array[1]}."
-        end
+
+    if @printed == false
+      if author && number_of_books_by_author != 0 && number_of_unread == 0
+        print_to_console("You've already read all of your books by that author.", false)
+      elsif author && number_of_books_by_author == 0
+        print_to_console("You do not have any books by that author.", false)
+      elsif author == nil && number_of_unread == 0
+        print_to_console("All books have already been read.", false)
       end
     end
   end
