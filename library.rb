@@ -8,8 +8,18 @@
 # library management utility        #
 #####################################
 
+require 'yaml'
+
 @library = {}
 @printed = false
+
+def load_library
+  YAML.load(File.read('library.yaml'))
+end
+
+def save_library
+  File.open('library.yaml', 'w') {|f| f.write(YAML.dump(library))}
+end
 
 # Helper methods
 def print_to_console(message, breaks = true)
