@@ -1,13 +1,22 @@
 class Book
-  attr_reader :title, :author, :status
+  attr_reader :title, :author, :bookmark, :status
 
   def initialize(title, author)
    @title = title
    @author = author
+   @bookmark = nil
    @status = "unread"
+  end
+
+  def place_bookmark(page_number)
+    @bookmark = page_number
   end
 
   def read
     @status = "read"
+  end
+
+  def to_s
+    puts "\"#{@title}\" by #{@author}, bookmark: #{@bookmark ? @bookmark : "unset"}, status: #{@status}"
   end
 end
