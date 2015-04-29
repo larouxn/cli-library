@@ -1,111 +1,95 @@
 #!/usr/bin/env ruby
 
-#####################################
-# Nicholas La Roux                  #
-# April 3 2015                      #
-# Etsy Code Challenge               #
-# Create command line personal      #
-# library management utility        #
-#####################################
+###############################
+# Nicholas La Roux            #
+# April 2015                  #
+# Command line personal       #
+# library management utility  #
+###############################
 
 require 'yaml'
+require_relative 'book'
 
-@library = {}
-@printed = false
+@library = []
 
 def load_library
-  YAML.load(File.read('library.yaml'))
+  @library = YAML.load(File.read('library.yaml'))
 end
 
 def save_library
-  File.open('library.yaml', 'w') {|f| f.write(YAML.dump(library))}
+  File.open('library.yaml', 'w') {|f| f.write(YAML.dump(@library))}
 end
 
-# Helper methods
-def print_to_console(message, breaks = true)
-  if breaks
-    puts "\n#{message}"
-    puts "\n"
-  else
-    puts message
+def book_in_library?(title, author)
+  @library.each do |book|
+    next unless book.title == title && book.author == author
+    return true
   end
-  @printed = true
+  return false
 end
 
-def format_book(array)
-  "#{array[0]} by #{array[1]} \(#{array[2]}\)"
+def add_book_to_library(title, author)
+  @library << Book.new(title, author) unless book_in_library?(title, author)
 end
 
-def create_key(value)
-  key = value.downcase.to_sym
-end
-
-# Main methods
-def add(title, author)
-  key = create_key(title)
-  if @library.has_key?(key)
-    print_to_console("That book is already in your library.")
-  else
-    @library[key] = [title, author, "unread"]
-    print_to_console("Added #{title} by #{author}")
+def retrieve_book(title, author)
+  @library.each do |book|
+    next unless book.title == title && book.author == author
+    return book
   end
+  return false
 end
 
-def read(title)
-  key = title.downcase.to_sym
-  if @library.has_key? key
-    if @library[key][2] == "read"
-      print_to_console("#{title} is already marked as read.")
-    else
-      @library[key][2] = "read"
-      print_to_console("You've read #{title}!")
-    end
-  else
-    print_to_console("#{title} is not in your library.")
-  end
+def read(title, author)
+  get_book(title, author) ? book = get_book(title, author) : "No book found"
+  book.status == "read" ? "Book is already marked as read" : book.read
 end
 
-def show(all_or_unread, author = nil)
-  puts "\n"
-  number_of_unread = 0
-  number_of_books_by_author = 0
-  @printed = false
-
-  if @library.size == 0
-    print_to_console("Your library is empty.", false)
-  else
-    @library.each do |key, array|
-      if author && all_or_unread == "unread" && array[1].downcase == author.downcase.tr('"', '') && array[2].to_s == "unread" # show unread by author
-        print_to_console(format_book(array), false)
-        number_of_books_by_author += 1
-        number_of_unread += 1
-      elsif author && all_or_unread == "unread" && array[1].downcase == author.downcase.tr('"', '')
-        number_of_books_by_author += 1 # Not perfect, used for show unread by author, when all books by that author have been read
-      elsif author && all_or_unread == "all" && array[1].downcase == author.downcase.tr('"', '') # show all by author
-        print_to_console(format_book(array), false)
-        number_of_books_by_author += 1
-      elsif author == nil && all_or_unread == "unread" && array[2].to_s == "unread" # show unread
-        print_to_console(format_book(array), false)
-        number_of_unread += 1
-      elsif author == nil && all_or_unread == "all" # show all
-        print_to_console(format_book(array), false)
-      end
-    end
-
-    if @printed == false
-      if author && number_of_books_by_author != 0 && number_of_unread == 0
-        print_to_console("You've already read all of your books by that author.", false)
-      elsif author && number_of_books_by_author == 0
-        print_to_console("You do not have any books by that author.", false)
-      elsif author == nil && number_of_unread == 0
-        print_to_console("All books have already been read.", false)
-      end
-    end
-  end
-  puts "\n"
+def show_books(all_or_unread, author)
 end
+
+# def show(all_or_unread, author = nil)
+#   puts "\n"
+#   number_of_unread = 0
+#   number_of_books_by_author = 0
+#   @printed = false
+#
+#   if @library.size == 0
+#     print_to_console("Your library is empty.", false)
+#   else
+#     @library.each do |key, array|
+#       if author && all_or_unread == "unread" && array[1].downcase == author.downcase.tr('"', '') && array[2].to_s == "unread" # show unread by author
+#         print_to_console(format_book(array), false)
+#         number_of_books_by_author += 1
+#         number_of_unread += 1
+#       elsif author && all_or_unread == "unread" && array[1].downcase == author.downcase.tr('"', '')
+#         number_of_books_by_author += 1 # Not perfect, used for show unread by author, when all books by that author have been read
+#       elsif author && all_or_unread == "all" && array[1].downcase == author.downcase.tr('"', '') # show all by author
+#         print_to_console(format_book(array), false)
+#         number_of_books_by_author += 1
+#       elsif author == nil && all_or_unread == "unread" && array[2].to_s == "unread" # show unread
+#         print_to_console(format_book(array), false)
+#         number_of_unread += 1
+#       elsif author == nil && all_or_unread == "all" # show all
+#         print_to_console(format_book(array), false)
+#       end
+#     end
+#
+#     if @printed == false
+#       if author && number_of_books_by_author != 0 && number_of_unread == 0
+#         print_to_console("You've already read all of your books by that author.", false)
+#       elsif author && number_of_books_by_author == 0
+#         print_to_console("You do not have any books by that author.", false)
+#       elsif author == nil && number_of_unread == 0
+#         print_to_console("All books have already been read.", false)
+#       end
+#     end
+#   end
+#   puts "\n"
+# end
 
 def quit
+  save_library
   print_to_console("Bye!")
   exit
 end
@@ -126,7 +110,10 @@ def help
   puts "\n"
 end
 
-print_to_console("Welcome to your library!")
+puts "Welcome to your library!"
+
+#add check for file existence
+load_library
 
 loop do
   print "> "

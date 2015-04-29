@@ -1,4 +1,3 @@
-# Etsy Code Challenge - CLI Personal Library Manager
-### Nicholas La Roux - April 3 2015
+# Command Line Library Manager
 
 Usage `ruby library.rb`
