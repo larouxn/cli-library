@@ -33,7 +33,7 @@ end
 
 def add_book_to_library(title, author)
   @library << Book.new(title, author) unless retrieve_book(title, author)
-  puts "Added #{@title} by #{@author} to your library."
+  puts "Added #{title} by #{author} to your library."
 end
 
 def read(title, author)
@@ -42,7 +42,7 @@ def read(title, author)
     if book.status == "read"
       "Book is already marked as read."
     else book.read
-      puts "#{@title} by #{@author} has been marked as read."
+      puts "#{title} by #{author} has been marked as read."
     end
   else
     "That book is not in your library."
@@ -53,7 +53,7 @@ def remove_book_from_library(title, author)
   if retrieve_book(title, author)
     book = retrieve_book(title, author)
     @library.delete(book)
-    puts "Removed #{@title} by #{@author} from your library."
+    puts "Removed #{title} by #{author} from your library."
   else
     "That book is not in your library."
   end
@@ -63,19 +63,64 @@ def show(all_or_unread, author = nil)
   if @library.size == 0
     puts "Your library is empty."
   else
+    printed = false
+
     @library.each do |book|
-      if all_or_unread == "unread" and author
-        puts book if book.status == "unread" && book.author == author
+      if all_or_unread == "unread" && author
+        book.to_s if book.status == "unread" && book.author == author
       elsif all_or_unread == "unread"
-        puts book if book.status == "unread"
+        book.to_s if book.status == "unread"
       elsif author
-        puts book if book.author == author
+        book.to_s if book.author == author
       else
-        puts book
+        book.to_s
       end
     end
+
+    # statistics(all_or_unread, author) if printed == false
+
   end
 end
+
+# def statistics(all_or_unread, author = nil)
+#   unread_by_author = 0
+#   books_by_author = 0
+#   unread_books = 0
+#
+#   @library.each do |book|
+#     unread_by_author += 1 if book.status == "unread" && book.author == author
+#     books_by_author += 1 if book.author == author
+#     unread_books += 1 if book.status == "unread"
+#   end
+#
+#   if author && unread_by_author != 0 && unread_books == 0
+#     puts "You've already read all of your books by that author."
+#   elsif author && books_by_author == 0
+#     puts "You do not have any books by that author."
+#   elsif author == nil && unread_books == 0
+#     puts "All books have already been read."
+#   end
+# end
+
+# def helper_messages(all_or_unread, author = nil)
+#   if all_or_unread == "unread" and author
+#
+#   elsif all_or_unread == "unread"
+#
+#   elsif author
+#
+#   else
+#
+#   end
+#
+#   if author && number_of_books_by_author != 0 && number_of_unread == 0
+#     puts "You've already read all of your books by that author."
+#   elsif author && number_of_books_by_author == 0
+#     puts "You do not have any books by that author."
+#   elsif author == nil && number_of_unread == 0
+#     puts "All books have already been read."
+#   end
+# end
 
 def quit
   save_library
@@ -99,12 +144,7 @@ def help
   puts "\n"
 end
 
-puts "Welcome to your library!"
-load_library
-
-loop do
-  print "> "
-
+def handle_input()
   # Capture input
   begin
     line = $stdin.gets.chomp
@@ -118,22 +158,22 @@ loop do
     help
   when /^add "{1}.*?"{1} "{1}.*?"{1}$/
     line = line.scan(/"{1}.*?"{1}/)
+    line[1] = line[1].tr('"', '')
     add_book_to_library(line[0], line[1])
   when /^remove "{1}.*?"{1} "{1}.*?"{1}$/
     line = line.scan(/"{1}.*?"{1}/)
+    line[1] = line[1].tr('"', '')
     remove_book_from_library(line[0], line[1])
   when /^read "{1}.*?"{1} "{1}.*?"{1}$/
     line = line.scan(/"{1}.*?"{1}/)
-    # line[1] = line[1].tr('"', '')
+    line[1] = line[1].tr('"', '')
     read(line[0], line[1])
-  # when /^read "{1}.*?"{1}$/
-  #   line = line.scan(/"{1}.*?"{1}/)
-  #   read(line[0], line[1])
   when /^show (all|unread)\s?(by "{1}.*?"{1})?$/
     line = line.scan(/(all|unread)|("{1}.*?"{1})/)
     if line[1] == nil # basic
       show(line[0][0])
     else # with author
+      line[1][1] = line[1][1].tr('"', '')
       show(line[0][0], line[1][1])
     end
   when /^(quit|exit)$/
@@ -142,4 +182,12 @@ loop do
   else
     puts "Command not recognized, please use 'help' for a list of available commands"
   end
+end
+
+puts "Welcome to your library!"
+load_library
+
+loop do
+  print "> "
+  handle_input
 end
