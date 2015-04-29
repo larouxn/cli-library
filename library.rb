@@ -13,11 +13,12 @@ require_relative 'book'
 @library = []
 
 def load_library
-  @library = YAML.load(File.read('library.yaml'))
+  storage = File.open('library.yaml', 'a+')
+  @library = YAML.load(File.read(storage))
 end
 
 def save_library
-  File.open('library.yaml', 'w') {|f| f.write(YAML.dump(@library))}
+  File.open('library.yaml', 'w+') {|f| f.write(YAML.dump(@library))}
 end
 
 def book_in_library?(title, author)
