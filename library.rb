@@ -10,27 +10,17 @@
 require 'yaml'
 require_relative 'book'
 
-@library = []
-
 def load_library
-  storage = File.open('library.yaml', 'a+')
-  @library = YAML.load(File.read(storage))
+  storage = File.open('my_library.yaml', 'a+')
+  if File.size(storage) == 0
+    @library = []
+  else
+    @library = YAML.load(File.read(storage))
+  end
 end
 
 def save_library
-  File.open('library.yaml', 'w+') {|f| f.write(YAML.dump(@library))}
-end
-
-def book_in_library?(title, author)
-  @library.each do |book|
-    next unless book.title == title && book.author == author
-    return true
-  end
-  return false
-end
-
-def add_book_to_library(title, author)
-  @library << Book.new(title, author) unless book_in_library?(title, author)
+  File.open('my_library.yaml', 'w+') {|f| f.write(YAML.dump(@library))}
 end
 
 def retrieve_book(title, author)
@@ -41,57 +31,55 @@ def retrieve_book(title, author)
   return false
 end
 
+def add_book_to_library(title, author)
+  @library << Book.new(title, author) unless retrieve_book(title, author)
+  puts "Added #{@title} by #{@author} to your library."
+end
+
 def read(title, author)
-  get_book(title, author) ? book = get_book(title, author) : "No book found"
-  book.status == "read" ? "Book is already marked as read" : book.read
+  if retrieve_book(title, author)
+    book = retrieve_book(title, author)
+    if book.status == "read"
+      "Book is already marked as read."
+    else book.read
+      puts "#{@title} by #{@author} has been marked as read."
+    end
+  else
+    "That book is not in your library."
+  end
 end
 
-def show_books(all_or_unread, author)
+def remove_book_from_library(title, author)
+  if retrieve_book(title, author)
+    book = retrieve_book(title, author)
+    @library.delete(book)
+    puts "Removed #{@title} by #{@author} from your library."
+  else
+    "That book is not in your library."
+  end
 end
 
-# def show(all_or_unread, author = nil)
-#   puts "\n"
-#   number_of_unread = 0
-#   number_of_books_by_author = 0
-#   @printed = false
-#
-#   if @library.size == 0
-#     print_to_console("Your library is empty.", false)
-#   else
-#     @library.each do |key, array|
-#       if author && all_or_unread == "unread" && array[1].downcase == author.downcase.tr('"', '') && array[2].to_s == "unread" # show unread by author
-#         print_to_console(format_book(array), false)
-#         number_of_books_by_author += 1
-#         number_of_unread += 1
-#       elsif author && all_or_unread == "unread" && array[1].downcase == author.downcase.tr('"', '')
-#         number_of_books_by_author += 1 # Not perfect, used for show unread by author, when all books by that author have been read
-#       elsif author && all_or_unread == "all" && array[1].downcase == author.downcase.tr('"', '') # show all by author
-#         print_to_console(format_book(array), false)
-#         number_of_books_by_author += 1
-#       elsif author == nil && all_or_unread == "unread" && array[2].to_s == "unread" # show unread
-#         print_to_console(format_book(array), false)
-#         number_of_unread += 1
-#       elsif author == nil && all_or_unread == "all" # show all
-#         print_to_console(format_book(array), false)
-#       end
-#     end
-#
-#     if @printed == false
-#       if author && number_of_books_by_author != 0 && number_of_unread == 0
-#         print_to_console("You've already read all of your books by that author.", false)
-#       elsif author && number_of_books_by_author == 0
-#         print_to_console("You do not have any books by that author.", false)
-#       elsif author == nil && number_of_unread == 0
-#         print_to_console("All books have already been read.", false)
-#       end
-#     end
-#   end
-#   puts "\n"
-# end
+def show(all_or_unread, author = nil)
+  if @library.size == 0
+    puts "Your library is empty."
+  else
+    @library.each do |book|
+      if all_or_unread == "unread" and author
+        puts book if book.status == "unread" && book.author == author
+      elsif all_or_unread == "unread"
+        puts book if book.status == "unread"
+      elsif author
+        puts book if book.author == author
+      else
+        puts book
+      end
+    end
+  end
+end
 
 def quit
   save_library
-  print_to_console("Bye!")
+  puts "Bye!"
   exit
 end
 
@@ -112,8 +100,6 @@ def help
 end
 
 puts "Welcome to your library!"
-
-#add check for file existence
 load_library
 
 loop do
@@ -132,11 +118,17 @@ loop do
     help
   when /^add "{1}.*?"{1} "{1}.*?"{1}$/
     line = line.scan(/"{1}.*?"{1}/)
-    line[1] = line[1].tr('"', '')
-    add(line[0], line[1])
-  when /^read "{1}.*?"{1}$/
+    add_book_to_library(line[0], line[1])
+  when /^remove "{1}.*?"{1} "{1}.*?"{1}$/
     line = line.scan(/"{1}.*?"{1}/)
-    read(line[0])
+    remove_book_from_library(line[0], line[1])
+  when /^read "{1}.*?"{1} "{1}.*?"{1}$/
+    line = line.scan(/"{1}.*?"{1}/)
+    # line[1] = line[1].tr('"', '')
+    read(line[0], line[1])
+  # when /^read "{1}.*?"{1}$/
+  #   line = line.scan(/"{1}.*?"{1}/)
+  #   read(line[0], line[1])
   when /^show (all|unread)\s?(by "{1}.*?"{1})?$/
     line = line.scan(/(all|unread)|("{1}.*?"{1})/)
     if line[1] == nil # basic
@@ -148,6 +140,6 @@ loop do
     quit
   when ""
   else
-    print_to_console("Command not recognized, please use 'help' for a list of available commands")
+    puts "Command not recognized, please use 'help' for a list of available commands"
   end
 end

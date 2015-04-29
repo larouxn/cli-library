@@ -4,7 +4,7 @@ class Book
   def initialize(title, author)
    @title = title
    @author = author
-   @bookmark = nil
+   @bookmark = "unset"
    @status = "unread"
   end
 
@@ -17,6 +17,6 @@ class Book
   end
 
   def to_s
-    puts "\"#{@title}\" by #{@author}, bookmark: #{@bookmark ? @bookmark : "unset"}, status: #{@status}"
+    puts "#{@title} by #{@author}, bookmark: #{@bookmark}, status: #{@status}"
   end
 end
