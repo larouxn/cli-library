@@ -7,20 +7,29 @@ Usage `ruby library.rb`
 
 Commands:
 - Add a book to your library with a given title and author. All books are unread and non-bookmarked by default.
-        add "title" "author"
-- Mark a book as read.
-        read "title"
+
+`add "title" "author"`
+- Mark a book as read
+
+`read "title"`
 - Display all of the books in your library.
-        show all
+
+`show all`
 - Display all of the unread books in your library.
-        show unread
+
+`show unread`
 - Shows all of the books in your library by the given author.
-        show all by "author"
+
+`show all by "author"`
 - Show the unread books in your library by the given author.
-        show unread by "author"
+
+`show unread by "author"`
 - Place a bookmark in the specified book at the given page number.
-        bookmark "title" "author" page_number
+
+`bookmark "title" "author" page_number`
 - Display this help information.
-        help
+
+`help`
 - Quit the program.
-        quit
+
+`quit`
