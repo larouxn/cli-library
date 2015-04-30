@@ -36,6 +36,16 @@ def add_book_to_library(title, author)
   puts "Added #{title} by #{author} to your library."
 end
 
+def remove_book_from_library(title, author)
+  if retrieve_book(title, author)
+    book = retrieve_book(title, author)
+    @library.delete(book)
+    puts "Removed #{title} by #{author} from your library."
+  else
+    "That book is not in your library."
+  end
+end
+
 def read(title, author)
   if retrieve_book(title, author)
     book = retrieve_book(title, author)
@@ -49,11 +59,11 @@ def read(title, author)
   end
 end
 
-def remove_book_from_library(title, author)
+def place_bookmark(title, author, page_number)
   if retrieve_book(title, author)
     book = retrieve_book(title, author)
-    @library.delete(book)
-    puts "Removed #{title} by #{author} from your library."
+    book.place_bookmark(page_number)
+    puts "Placed bookmark on page #{page_number} in #{title} by #{author}."
   else
     "That book is not in your library."
   end
@@ -63,8 +73,6 @@ def show(all_or_unread, author = nil)
   if @library.size == 0
     puts "Your library is empty."
   else
-    printed = false
-
     @library.each do |book|
       if all_or_unread == "unread" && author
         book.to_s if book.status == "unread" && book.author == author
@@ -76,9 +84,6 @@ def show(all_or_unread, author = nil)
         book.to_s
       end
     end
-
-    # statistics(all_or_unread, author) if printed == false
-
   end
 end
 
@@ -133,13 +138,14 @@ def help
   Usage: ruby library.rb
 
   Commands:
-  - add "title" "author"      Adds a book to the library with the given title and author. All books are unread by default.
-  - read "title"              Marks a given book as read.
-  - show all                  Displays all of the books in the library.
-  - show unread               Display all of the books that are unread.
-  - show all by "author"      Shows all of the books in the library by the given author.
-  - show unread by "author"   Shows the unread books in the library by the given author.
-  - quit                      Quits the program.
+  - add "title" "author"                     Adds a book to the library with the given title and author. All books are unread by default.
+  - read "title"                             Marks a given book as read.
+  - show all                                 Displays all of the books in the library.
+  - show unread                              Display all of the books that are unread.
+  - show all by "author"                     Shows all of the books in the library by the given author.
+  - show unread by "author"                  Shows the unread books in the library by the given author.
+  - bookmark "title" "author" page_number    Places a bookmark in the specified book at the given page number.
+  - quit                                     Quits the program.
   help
   puts "\n"
 end
@@ -168,6 +174,11 @@ def handle_input()
     line = line.scan(/"{1}.*?"{1}/)
     line[1] = line[1].tr('"', '')
     read(line[0], line[1])
+  when /^bookmark "{1}.*?"{1} "{1}.*?"{1} \d+$/
+    line1 = line.scan(/"{1}.*?"{1}/)
+    line2 = line.scan(/\d+/)
+    line1[1] = line1[1].tr('"', '')
+    place_bookmark(line1[0], line1[1], line2[0])
   when /^show (all|unread)\s?(by "{1}.*?"{1})?$/
     line = line.scan(/(all|unread)|("{1}.*?"{1})/)
     if line[1] == nil # basic
