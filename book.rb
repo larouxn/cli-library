@@ -4,7 +4,7 @@ class Book
   def initialize(title, author)
    @title = title
    @author = author
-   @bookmark = "unset"
+   @bookmark = "none"
    @status = "unread"
   end
 

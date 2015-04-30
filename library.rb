@@ -70,62 +70,36 @@ def place_bookmark(title, author, page_number)
 end
 
 def show(all_or_unread, author = nil)
+  found_books = false
+
   if @library.size == 0
     puts "Your library is empty."
   else
-    @library.each do |book|
-      if all_or_unread == "unread" && author
-        book.to_s if book.status == "unread" && book.author == author
-      elsif all_or_unread == "unread"
-        book.to_s if book.status == "unread"
-      elsif author
-        book.to_s if book.author == author
-      else
+    @library.each_with_index do |book, index|
+      if all_or_unread == "unread" && author # show unread by author
+        if book.status == "unread" && book.author == author
+          found_books = true and book.to_s
+        elsif found_books == false && (index + 1) == @library.length
+          puts "You've already read all of your books by that author."
+        end
+      elsif all_or_unread == "unread" # show unread
+        if book.status == "unread"
+          found_books = true and book.to_s
+        elsif found_books == false && (index + 1) == @library.length
+          puts "You've already read all of your books."
+        end
+      elsif author # show all by author
+        if book.author == author
+          found_books = true and book.to_s
+        elsif found_books == false && (index + 1) == @library.length
+          puts "You do not have any books by that author in your library."
+        end
+      else # show all
         book.to_s
       end
     end
   end
 end
-
-# def statistics(all_or_unread, author = nil)
-#   unread_by_author = 0
-#   books_by_author = 0
-#   unread_books = 0
-#
-#   @library.each do |book|
-#     unread_by_author += 1 if book.status == "unread" && book.author == author
-#     books_by_author += 1 if book.author == author
-#     unread_books += 1 if book.status == "unread"
-#   end
-#
-#   if author && unread_by_author != 0 && unread_books == 0
-#     puts "You've already read all of your books by that author."
-#   elsif author && books_by_author == 0
-#     puts "You do not have any books by that author."
-#   elsif author == nil && unread_books == 0
-#     puts "All books have already been read."
-#   end
-# end
-
-# def helper_messages(all_or_unread, author = nil)
-#   if all_or_unread == "unread" and author
-#
-#   elsif all_or_unread == "unread"
-#
-#   elsif author
-#
-#   else
-#
-#   end
-#
-#   if author && number_of_books_by_author != 0 && number_of_unread == 0
-#     puts "You've already read all of your books by that author."
-#   elsif author && number_of_books_by_author == 0
-#     puts "You do not have any books by that author."
-#   elsif author == nil && number_of_unread == 0
-#     puts "All books have already been read."
-#   end
-# end
 
 def quit
   save_library
